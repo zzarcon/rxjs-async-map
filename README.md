@@ -2,6 +2,8 @@
 
 Map an observable using an async function with a configurable concurreny level, while preserving element order.
 
+[![CircleCI](https://img.shields.io/circleci/project/github/srijs/rxjs-async-map.svg)](https://circleci.com/gh/srijs/rxjs-async-map/tree/master)
+
 ## Installation
 
 `rxjs-async-map` is available via npm or yarn:
