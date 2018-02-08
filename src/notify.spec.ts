@@ -1,37 +1,30 @@
 import { expectToReject } from 'jasmine-promise-tools';
 
-import { NotifyPromise } from './notify';
+import { Notify } from './notify';
 
-describe('NotifyPromise', () => {
+describe('Notify', () => {
   it('calls onReady when wrapped promise resolves', async () => {
-    const onReady = jest.fn(p => p.notify());
-    const notify = new NotifyPromise(Promise.resolve(), onReady);
-    await notify.promise();
+    const onReady = jest.fn(p => p.notifyIfReady());
+    const notify = new Notify(Promise.resolve(), onReady);
+    await new Promise<void>((resolve, reject) => notify.setHandlers(resolve, reject));
 
     expect(onReady).toHaveBeenCalledTimes(1);
-    expect(notify.isReady()).toBe(true);
   });
 
   it('calls onReady when wrapped promise rejects', async () => {
-    const onReady = jest.fn(p => p.notify());
-    const notify = new NotifyPromise(Promise.reject('error'), onReady);
-    const err = await expectToReject(notify.promise());
+    const onReady = jest.fn(p => p.notifyIfReady());
+    const notify = new Notify(Promise.reject('error'), onReady);
+    const promise = new Promise<void>((resolve, reject) => notify.setHandlers(resolve, reject));
+    const err = await expectToReject(promise);
 
     expect(err).toBe('error');
-    expect(notify.isReady()).toBe(true);
+    expect(onReady).toHaveBeenCalledTimes(1);
   });
 
   it('signals non-readiness when the wrapped promise has not been resolved yet', () => {
     const onReady = jest.fn();
-    const notify = new NotifyPromise(Promise.reject('error'), onReady);
+    const notify = new Notify(Promise.reject('error'), onReady);
 
-    expect(notify.isReady()).toBe(false);
-  });
-
-  it('throws when attempting to notify while the wrapped promise has not been resolved yet', () => {
-    const onReady = jest.fn();
-    const notify = new NotifyPromise(Promise.reject('error'), onReady);
-
-    expect(() => notify.notify()).toThrow(/attempted to notify non-ready promise/);
+    expect(notify.notifyIfReady()).toBe(false);
   });
 });

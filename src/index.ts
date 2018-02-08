@@ -2,20 +2,18 @@ import { Observable } from 'rxjs/Observable';
 import { mergeMap } from 'rxjs/operators/mergeMap';
 
 import { shiftWhile } from './utils';
-import { NotifyPromise } from './notify';
+import { Notify } from './notify';
 
 const mapper = <T, U>(project: (value: T) => PromiseLike<U>) => {
-  const promises = new Array<NotifyPromise<U>>();
+  const notifiers = new Array<Notify<U>>();
 
-  const onReady = () =>
-    shiftWhile(promises, p => p.isReady()).forEach(p => p.notify());
+  const onReady = () => shiftWhile(notifiers, notify => notify.notifyIfReady());
 
-  return (value: T) => {
-    const notify = new NotifyPromise(project(value), onReady);
-    promises.push(notify);
-
-    return notify.promise();
-  };
+  return (value: T) => new Promise((resolve, reject) => {
+    const notify = new Notify<U>(project(value), onReady);
+    notify.setHandlers(resolve, reject);
+    notifiers.push(notify);
+  });
 };
 
 export { Observable };

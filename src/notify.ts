@@ -1,4 +1,4 @@
-export class NotifyPromise<T> {
+export class Notify<T> {
   private _resolve: (item: T) => void;
   private _reject: (reason: Error) => void;
 
@@ -7,43 +7,37 @@ export class NotifyPromise<T> {
   private _isRejected = false;
   private _reason?: Error;
 
-  private _promise: Promise<T>;
-
-  constructor(promise: PromiseLike<T>, onReady: (notify: NotifyPromise<T>) => void) {
-    this._promise = new Promise((resolve, reject) => {
-      this._resolve = resolve;
-      this._reject = reject;
-
-      promise.then(
-        value => {
-          this._isFulfilled = true;
-          this._value = value;
-          onReady(this);
-        },
-        reason => {
-          this._isRejected = true;
-          this._reason = reason;
-          onReady(this);
-        }
-      );
-    });
+  constructor(promise: PromiseLike<T>, onReady: (notify: Notify<T>) => void) {
+    promise.then(
+      value => {
+        this._isFulfilled = true;
+        this._value = value;
+        onReady(this);
+      },
+      reason => {
+        this._isRejected = true;
+        this._reason = reason;
+        onReady(this);
+      }
+    );
   }
 
-  isReady() {
-    return this._isFulfilled || this._isRejected;
+  setHandlers(resolve: (item: T) => void, reject: (reason: Error) => void) {
+    this._resolve = resolve;
+    this._reject = reject;
   }
 
-  notify() {
+  notifyIfReady() {
     if (this._isFulfilled) {
       this._resolve(this._value);
+
+      return true;
     } else if (this._isRejected) {
       this._reject(this._reason);
-    } else {
-      throw new Error('attempted to notify non-ready promise');
-    }
-  }
 
-  promise(): Promise<T> {
-    return this._promise;
+      return true;
+    } else {
+      return false;
+    }
   }
 }
