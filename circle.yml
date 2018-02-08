@@ -1,0 +1,12 @@
+machine:
+  node:
+    version: "8"
+dependencies:
+  pre:
+    - npm install -g yarn
+  override:
+    - yarn install
+test:
+  override:
+    - yarn run lint
+    - yarn test
