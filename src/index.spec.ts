@@ -29,7 +29,7 @@ describe('asyncMap', () => {
     });
     await asyncMap(project, 2)(input).toArray().toPromise();
 
-    expect(invocations['bar'] - invocations['foo']).toBeLessThan(2);
+    expect(invocations['bar'] - invocations['foo']).toBeLessThan(5);
     expect(invocations['baz']).toBeGreaterThan(invocations['foo']);
     expect(invocations['baz']).toBeGreaterThan(invocations['bar']);
   });
