@@ -26,7 +26,7 @@ import { asyncMap } from 'rxjs-async-map';
 const myPromise = val =>
   new Promise(resolve => setTimeout(() => resolve(`Result: ${val}`), Math.random() * 1000));
 
-const source = Observable.of(1, 2, 3);
+const source = of(1, 2, 3);
 
 // Map over the observable using the async function, while running
 // up to two promises concurrently.
