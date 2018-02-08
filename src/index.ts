@@ -13,6 +13,7 @@ const mapper = <T, U>(project: (value: T) => PromiseLike<U>) => {
   return (value: T) => {
     const notify = new NotifyPromise(project(value), onReady);
     promises.push(notify);
+
     return notify.promise();
   };
 };

@@ -24,9 +24,10 @@ describe('asyncMap', () => {
     const input = Observable.of('foo', 'bar', 'baz');
     const project = jest.fn(v => {
       invocations[v] = Date.now();
+
       return Observable.of().delay(10).toPromise();
     });
-    const output = await asyncMap(project, 2)(input).toArray().toPromise();
+    await asyncMap(project, 2)(input).toArray().toPromise();
 
     expect(invocations['bar'] - invocations['foo']).toBeLessThan(2);
     expect(invocations['baz']).toBeGreaterThan(invocations['foo']);

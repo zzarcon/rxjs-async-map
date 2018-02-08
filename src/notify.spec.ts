@@ -4,7 +4,7 @@ import { NotifyPromise } from './notify';
 
 describe('NotifyPromise', () => {
   it('calls onReady when wrapped promise resolves', async () => {
-    const onReady = jest.fn((notify: NotifyPromise<void>) => notify.notify());
+    const onReady = jest.fn(p => p.notify());
     const notify = new NotifyPromise(Promise.resolve(), onReady);
     await notify.promise();
 
@@ -13,7 +13,7 @@ describe('NotifyPromise', () => {
   });
 
   it('calls onReady when wrapped promise rejects', async () => {
-    const onReady = jest.fn((notify: NotifyPromise<void>) => notify.notify());
+    const onReady = jest.fn(p => p.notify());
     const notify = new NotifyPromise(Promise.reject('error'), onReady);
     const err = await expectToReject(notify.promise());
 
