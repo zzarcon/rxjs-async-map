@@ -8,7 +8,7 @@ describe('Notify', () => {
   it('calls onReady when wrapped promise resolves', async () => {
     const onReady = jest.fn(p => p.notifyIfReady());
     await new Observable<void>(sub => {
-      notify(Promise.resolve(), onReady, sub);
+      notify(Promise.resolve(), sub, onReady);
     }).toPromise();
 
     expect(onReady).toHaveBeenCalledTimes(1);
@@ -17,7 +17,7 @@ describe('Notify', () => {
   it('calls onReady when wrapped promise rejects', async () => {
     const onReady = jest.fn(p => p.notifyIfReady());
     const promise = new Observable<void>(sub => {
-      notify(Promise.reject('error'), onReady, sub);
+      notify(Promise.reject('error'), sub, onReady);
     }).toPromise();
     const err = await expectToReject(promise);
 
@@ -27,7 +27,7 @@ describe('Notify', () => {
 
   it('signals non-readiness when the wrapped promise has not been resolved yet', () => {
     const onReady = jest.fn();
-    const notifier = notify(Promise.reject('error'), onReady, emptyObserver);
+    const notifier = notify(Promise.reject('error'), emptyObserver, onReady);
 
     expect(notifier.notifyIfReady()).toBe(false);
   });

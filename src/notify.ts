@@ -6,8 +6,8 @@ export interface Notifier {
 
 export const notify = <T>(
   promise: PromiseLike<T>,
-  onReady: (notifier: Notifier) => void,
-  observer: Observer<T>
+  observer: Observer<T>,
+  onReady: (notifier: Notifier) => void
 ): Notifier => {
   let isFulfilled = false;
   let value: T;
