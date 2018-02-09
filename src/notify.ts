@@ -9,37 +9,26 @@ export const notify = <T>(
   observer: Observer<T>,
   onReady: (notifier: Notifier) => void
 ): Notifier => {
-  let isFulfilled = false;
-  let value: T;
-  let isRejected = false;
-  let reason: Error;
-
   const notifier = {
-    notifyIfReady() {
-      if (isFulfilled) {
+    notifyIfReady: () => false
+  };
+
+  promise.then(
+    value => {
+      notifier.notifyIfReady = () => {
         observer.next(value);
         observer.complete();
 
         return true;
-      } else if (isRejected) {
+      };
+      onReady(notifier);
+    },
+    reason => {
+      notifier.notifyIfReady = () => {
         observer.error(reason);
 
         return true;
-      } else {
-        return false;
-      }
-    }
-  };
-
-  promise.then(
-    resolveValue => {
-      isFulfilled = true;
-      value = resolveValue;
-      onReady(notifier);
-    },
-    rejectionReason => {
-      isRejected = true;
-      reason = rejectionReason;
+      };
       onReady(notifier);
     }
   );
