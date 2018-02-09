@@ -9,9 +9,9 @@ const mapper = <T, U>(project: (value: T) => PromiseLike<U>) => {
 
   const onReady = () => shiftWhile(notifiers, notify => notify.notifyIfReady());
 
-  return (value: T) => new Promise((resolve, reject) => {
+  return (value: T) => new Observable(sub => {
     const notify = new Notify<U>(project(value), onReady);
-    notify.setHandlers(resolve, reject);
+    notify.setSubscriber(sub);
     notifiers.push(notify);
   });
 };

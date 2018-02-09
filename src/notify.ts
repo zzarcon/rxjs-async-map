@@ -1,6 +1,7 @@
+import { Subscriber } from 'rxjs/Subscriber';
+
 export class Notify<T> {
-  private _resolve: (item: T) => void;
-  private _reject: (reason: Error) => void;
+  private _sub: Subscriber<T>;
 
   private _isFulfilled = false;
   private _value?: T;
@@ -22,18 +23,18 @@ export class Notify<T> {
     );
   }
 
-  setHandlers(resolve: (item: T) => void, reject: (reason: Error) => void) {
-    this._resolve = resolve;
-    this._reject = reject;
+  setSubscriber(sub: Subscriber<T>) {
+    this._sub = sub;
   }
 
   notifyIfReady() {
     if (this._isFulfilled) {
-      this._resolve(this._value);
+      this._sub.next(this._value);
+      this._sub.complete();
 
       return true;
     } else if (this._isRejected) {
-      this._reject(this._reason);
+      this._sub.error(this._reason);
 
       return true;
     } else {
