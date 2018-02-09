@@ -1,44 +1,48 @@
-import { Subscriber } from 'rxjs/Subscriber';
+import { Observer } from 'rxjs/Observer';
 
-export class Notify<T> {
-  private _sub: Subscriber<T>;
-
-  private _isFulfilled = false;
-  private _value?: T;
-  private _isRejected = false;
-  private _reason?: Error;
-
-  constructor(promise: PromiseLike<T>, onReady: (notify: Notify<T>) => void) {
-    promise.then(
-      value => {
-        this._isFulfilled = true;
-        this._value = value;
-        onReady(this);
-      },
-      reason => {
-        this._isRejected = true;
-        this._reason = reason;
-        onReady(this);
-      }
-    );
-  }
-
-  setSubscriber(sub: Subscriber<T>) {
-    this._sub = sub;
-  }
-
-  notifyIfReady() {
-    if (this._isFulfilled) {
-      this._sub.next(this._value);
-      this._sub.complete();
-
-      return true;
-    } else if (this._isRejected) {
-      this._sub.error(this._reason);
-
-      return true;
-    } else {
-      return false;
-    }
-  }
+export interface Notifier {
+  notifyIfReady(): boolean;
 }
+
+export const notify = <T>(
+  promise: PromiseLike<T>,
+  onReady: (notifier: Notifier) => void,
+  observer: Observer<T>
+): Notifier => {
+  let isFulfilled = false;
+  let value: T;
+  let isRejected = false;
+  let reason: Error;
+
+  const notifier = {
+    notifyIfReady() {
+      if (isFulfilled) {
+        observer.next(value);
+        observer.complete();
+
+        return true;
+      } else if (isRejected) {
+        observer.error(reason);
+
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+
+  promise.then(
+    resolveValue => {
+      isFulfilled = true;
+      value = resolveValue;
+      onReady(notifier);
+    },
+    rejectionReason => {
+      isRejected = true;
+      reason = rejectionReason;
+      onReady(notifier);
+    }
+  );
+
+  return notifier;
+};

@@ -2,17 +2,15 @@ import { Observable } from 'rxjs/Observable';
 import { mergeMap } from 'rxjs/operators/mergeMap';
 
 import { shiftWhile } from './utils';
-import { Notify } from './notify';
+import { Notifier, notify } from './notify';
 
 const mapper = <T, U>(project: (value: T) => PromiseLike<U>) => {
-  const notifiers = new Array<Notify<U>>();
+  const notifiers = new Array<Notifier>();
 
-  const onReady = () => shiftWhile(notifiers, notify => notify.notifyIfReady());
+  const onReady = () => shiftWhile(notifiers, notifier => notifier.notifyIfReady());
 
-  return (value: T) => new Observable(sub => {
-    const notify = new Notify<U>(project(value), onReady);
-    notify.setSubscriber(sub);
-    notifiers.push(notify);
+  return (value: T) => new Observable<U>(sub => {
+    notifiers.push(notify(project(value), onReady, sub));
   });
 };
 
@@ -21,4 +19,5 @@ export { Observable };
 export const asyncMap = <T, U>(
   project: (item: T) => PromiseLike<U>,
   concurrent: number
-) => mergeMap(mapper(project), concurrent);
+): (source: Observable<T>) => Observable<U> =>
+  mergeMap(mapper(project), concurrent);
