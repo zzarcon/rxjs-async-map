@@ -1,5 +1,5 @@
-import { Observable } from 'rxjs/Observable';
-import { mergeMap } from 'rxjs/operators/mergeMap';
+import { Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 import { Notifier, notify } from './notify';
 
@@ -20,8 +20,6 @@ const mapper = <T, U>(project: (value: T) => PromiseLike<U>) => {
     notifiers.push(notify(project(value), sub, onReady));
   });
 };
-
-export { Observable };
 
 export const asyncMap = <T, U>(
   project: (item: T) => PromiseLike<U>,
