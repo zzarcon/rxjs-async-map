@@ -1,5 +1,5 @@
-import { Observable, of, empty } from 'rxjs';
-import {toArray,delay} from 'rxjs/operators';
+import { of, empty } from 'rxjs';
+import { toArray,delay } from 'rxjs/operators';
 import { asyncMap } from './index';
 
 describe('asyncMap', () => {

@@ -2,12 +2,12 @@ import { Observable, Observer } from 'rxjs';
 import { expectToReject } from 'jasmine-promise-tools';
 import { notify } from './notify';
 
-const emptyObserver : Observer<any> = {
-  closed:true,
-  next(value: any): void { /* noop */},
+const emptyObserver: Observer<any> = {
+  closed: true,
+  next(value: any): void { /* noop */ },
   error(err: any): void { throw err; },
   complete(): void { /*noop*/ }
-}
+};
 
 describe('Notify', () => {
   it('calls onReady when wrapped promise resolves', async () => {
