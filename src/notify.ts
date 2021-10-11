@@ -1,4 +1,4 @@
-import { Observer } from 'rxjs';
+import { Observer } from "rxjs";
 
 export interface Notifier {
   notifyIfReady(): boolean;
@@ -10,11 +10,11 @@ export const notify = <T>(
   onReady: (notifier: Notifier) => void
 ): Notifier => {
   const notifier = {
-    notifyIfReady: () => false
+    notifyIfReady: () => false,
   };
 
   promise.then(
-    value => {
+    (value) => {
       notifier.notifyIfReady = () => {
         observer.next(value);
         observer.complete();
@@ -23,7 +23,7 @@ export const notify = <T>(
       };
       onReady(notifier);
     },
-    reason => {
+    (reason) => {
       notifier.notifyIfReady = () => {
         observer.error(reason);
 
