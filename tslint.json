@@ -20,7 +20,7 @@
       "object-literal-sort-keys": true,
       "prefer-const": true,
       "array-type": [true, "generic"],
-      "arrow-parens": [true, "ban-single-arg-parens"],
+      "arrow-parens": [true],
       "arrow-return-shorthand": [true, "multiline"],
       "class-name": true,
       "interface-over-type-literal": true,
@@ -31,7 +31,7 @@
       "no-trailing-whitespace": true,
       "one-line": [true, "check-catch", "check-finally", "check-else", "check-open-brace", "check-whitespace"],
       "one-variable-per-declaration": [true, "ignore-for-loop"],
-      "quotemark": [true, "single"],
+      "quotemark": [true, "double"],
       "semicolon": [true, "always"],
       "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
   }
