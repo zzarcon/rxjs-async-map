@@ -1,5 +1,4 @@
 import { Observable, Observer } from "rxjs";
-import { expectToReject } from "jasmine-promise-tools";
 import { notify } from "./notify";
 
 const emptyObserver: Observer<any> = {
@@ -29,9 +28,8 @@ describe("Notify", () => {
     const promise = new Observable<void>((sub) => {
       notify(Promise.reject("error"), sub, onReady);
     }).toPromise();
-    const err = await expectToReject(promise);
 
-    expect(err).toBe("error");
+    await expect(() => promise).rejects.toBe("error");
     expect(onReady).toHaveBeenCalledTimes(1);
   });
 
